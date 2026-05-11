@@ -12,7 +12,7 @@
     <Window.SystemBackdrop>
         <MicaBackdrop />
     </Window.SystemBackdrop>
-   
+
     <Grid ColumnSpacing="20">
 
         <Grid.ColumnDefinitions>
@@ -75,25 +75,21 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <Button Grid.Column="0"
-                        Content="Add"
-                        Tag="+"
-                        Click="Operate" />
+                <Button Content="Add" Grid.Column="2"
+        Command="{x:Bind ViewModel.OperationCommand}"
+        CommandParameter="+" />
 
-                <Button Grid.Column="1"
-                        Content="Multiply"
-                        Tag="*"
-                        Click="Operate" />
+                <Button Content="Multiply" Grid.Column="0"
+        Command="{x:Bind ViewModel.OperationCommand}"
+        CommandParameter="*" />
 
-                <Button Grid.Column="2"
-                        Content="Subtract"
-                        Tag="-"
-                        Click="Operate" />
+                <Button Content="Subtract" Grid.Column="3"
+        Command="{x:Bind ViewModel.OperationCommand}"
+        CommandParameter="-" />
 
-                <Button Grid.Column="3"
-                        Content="Divide"
-                        Tag="/"
-                        Click="Operate" />
+                <Button Content="Divide" Grid.Column="1"
+        Command="{x:Bind ViewModel.OperationCommand}"
+        CommandParameter="/" />
 
             </Grid>
 

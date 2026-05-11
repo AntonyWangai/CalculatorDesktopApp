@@ -17,9 +17,6 @@ namespace Calculator.Views
 
         }
 
-        private void Operate(object sender, RoutedEventArgs e)
-        {
-            ViewModel.Operate(sender, e);
-        }
+       
     }
 }

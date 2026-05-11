@@ -1,78 +1,158 @@
-﻿using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
+﻿using Microsoft.UI.Xaml.Documents;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows.Input;
 
 namespace Calculator.ViewModels
 {
     public class CalculatorViewModel : INotifyPropertyChanged
     {
-        public string Num1 { get; set; }
-        public string Num2 { get; set; }
-        private string result { get; set; }
-        public string Result
+        // Constructor: initializes the command and connects logic + validation
+        public CalculatorViewModel()
         {
-            get => result;
+            // RelayCommand wraps ExecuteOperation and CanExecuteOperation
+            OperationCommand = new RelayCommand(ExecuteOperation, CanExecuteOperation);
+        }
+
+       //First Input
+        private string _num1;
+
+        // Number input bound from UI (TwoWay binding)
+        public string Num1
+        {
+            get => _num1;
             set
             {
-                result = value;
+                _num1 = value;
+
+                // Notify UI that Num1 changed
+                OnPropertyChanged();
+
+                // Force UI to re-check if buttons should be enabled/disabled
+                (OperationCommand as RelayCommand)?.RaiseCanExecuteChanged();
+            }
+        }
+
+        // Second input
+        private string _num2;
+
+        // Number input bound from UI (TwoWay binding)
+        public string Num2
+        {
+            get => _num2;
+            set
+            {
+                _num2 = value;
+
+                // Notify UI that Num2 changed
+                OnPropertyChanged();
+
+                // Re-evaluate CanExecute (enable/disable buttons)
+                (OperationCommand as RelayCommand)?.RaiseCanExecuteChanged();
+            }
+        }
+
+        // Backing field for calculation result
+        private string _result;
+
+        // Result displayed in UI
+        public string Result
+        {
+            get => _result;
+            set
+            {
+                _result = value;
+
+                // Notify UI that Result changed
                 OnPropertyChanged();
             }
         }
-        public ObservableCollection<string> History { get; set; } = new ObservableCollection<string>();
-        public string WelcomeMessage { get; set; } = "Welcome to the Calculator App!";
-        public string ErrorMessage { get; set; } = "An error occurred. Please check your input and try again.";
 
+        
+        public string WelcomeMessage { get; set; } =
+            "Welcome to the Calculator App!";
+
+        public string ErrorMessage { get; set; } =
+            "An error occurred. Please check your input and try again.";
+
+        // Event required by INotifyPropertyChanged (updates UI automatically)
         public event PropertyChangedEventHandler? PropertyChanged;
+
+        // Stores calculation history
+        public ObservableCollection<string> History { get; } = new();
+
+        // Command used by all calculator buttons
+        public ICommand OperationCommand { get; }
+
+        // Determines if the button should be enabled or disabled
+        private bool CanExecuteOperation(object? parameter)
+        {
+            // Ensure both inputs are valid numbers
+            if (!double.TryParse(Num1, out double A) ||
+                !double.TryParse(Num2, out double B))
+            {
+                return false;
+            }
+
+            // Prevent division by zero
+            if (parameter is string op && op == "/" && B == 0)
+            {
+                return false;
+            }
+
+            
+            return true;
+        }
+
+        // Notifies UI about property changes 
         protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public void Operate(object sender, RoutedEventArgs e)
+        // Main calculator logic executed when a button is clicked
+        private void ExecuteOperation(object? parameter)
         {
-            if (sender is not Button btn)
+            // Validate inputs before calculation
+            if (!double.TryParse(Num1, out double A) ||
+                !double.TryParse(Num2, out double B))
             {
                 Result = ErrorMessage;
                 return;
             }
-            string? operation = btn.Tag?.ToString();
 
+            string expression;
 
-            if (double.TryParse(Num1, out double A) && double.TryParse(Num2, out double B))
+            // Determine operation based on button CommandParameter
+            switch (parameter)
             {
-                string expression = "";
-                switch (operation)
-                {
-                    case "+":
-                        Result = (A + B).ToString("N2");
-                        expression = $"{A} + {B} = {Result}";
-                        break;
-                    case "-":
-                        Result = (A - B).ToString("N2");
-                        expression = $"{A} - {B} = {Result}";
-                        break;
-                    case "*":
-                        Result = (A * B).ToString("N2");
-                        expression = $"{A} * {B} = {Result}";
-                        break;
-                    case "/":
-                        Result = B == 0 ? "Cannot divide by zero" : (A / B).ToString("N2");
-                        expression = B == 0 ? $"Cannot divide {A} by zero" : $"{A} / {B} = {Result}";
-                        break;
-                    default:
-                        Result = ErrorMessage;
-                        break;
-                }
-                History.Insert(0, expression);
+                case "+":
+                    Result = (A + B).ToString("N2");
+                    expression = $"{A} + {B} = {Result}";
+                    break;
+
+                case "-":
+                    Result = (A - B).ToString("N2");
+                    expression = $"{A} - {B} = {Result}";
+                    break;
+
+                case "*":
+                    Result = (A * B).ToString("N2");
+                    expression = $"{A} * {B} = {Result}";
+                    break;
+
+                case "/":
+                    Result = (A / B).ToString("N2");
+                    expression = $"{A} / {B} = {Result}";
+                    break;
+
+                default:
+                    return;
             }
-            else
-            {
-                Result = ErrorMessage;
-            }
+
+            // Add result to history (auto-updates UI)
+            History.Insert(0, expression);
         }
-
     }
 }
-
