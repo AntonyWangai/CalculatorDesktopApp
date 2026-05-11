@@ -1,18 +1,35 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace Calculator.ViewModels
 {
-    public class CalculatorViewModel
+    public class CalculatorViewModel : INotifyPropertyChanged
     {
         public string Num1 { get; set; }
         public string Num2 { get; set; }
-        public string Result { get; set; }
-        public ObservableCollection<string> History { get; set; } = new();
+        private string result { get; set; }
+        public string Result
+        {
+            get => result;
+            set
+            {
+                result = value;
+                OnPropertyChanged();
+            }
+        }
+        public ObservableCollection<string> History { get; set; } = new ObservableCollection<string>();
         public string WelcomeMessage { get; set; } = "Welcome to the Calculator App!";
         public string ErrorMessage { get; set; } = "An error occurred. Please check your input and try again.";
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
         public void Operate(object sender, RoutedEventArgs e)
         {
             if (sender is not Button btn)
