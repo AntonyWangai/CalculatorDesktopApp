@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Window
+    x:Class="Calculator.Views.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="Calculator">
+
+    <Window.SystemBackdrop>
+        <MicaBackdrop />
+    </Window.SystemBackdrop>
+
+    <Grid ColumnSpacing="20">
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="1*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- LEFT SIDE -->
+        <StackPanel Grid.Column="0"
+                    Padding="100"
+                    Spacing="10">
+
+            <!-- Welcome Message -->
+            <TextBlock FontSize="18"
+                       Text="{x:Bind ViewModel.WelcomeMessage, Mode=OneWay}" />
+
+            <!-- INPUTS -->
+            <Grid ColumnSpacing="10"
+                  RowSpacing="10">
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <!-- First Number -->
+                <TextBlock Grid.Column="0"
+                           Grid.Row="0"
+                           Text="First Number:" />
+
+                <TextBox Grid.Column="0"
+                         Grid.Row="1"
+                         Text="{x:Bind ViewModel.Num1, Mode=TwoWay}"
+                         PlaceholderText="Enter your first number" />
+
+                <!-- Second Number -->
+                <TextBlock Grid.Column="1"
+                           Grid.Row="0"
+                           Text="Second Number:" />
+
+                <TextBox Grid.Column="1"
+                         Grid.Row="1"
+                         Text="{x:Bind ViewModel.Num2, Mode=TwoWay}"
+                         PlaceholderText="Enter your second number" />
+
+            </Grid>
+
+            <!-- BUTTONS -->
+            <Grid ColumnSpacing="20">
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Button Grid.Column="0"
+                        Content="Add"
+                        Tag="+"
+                        Click="Operate" />
+
+                <Button Grid.Column="1"
+                        Content="Multiply"
+                        Tag="*"
+                        Click="Operate" />
+
+                <Button Grid.Column="2"
+                        Content="Subtract"
+                        Tag="-"
+                        Click="Operate" />
+
+                <Button Grid.Column="3"
+                        Content="Divide"
+                        Tag="/"
+                        Click="Operate" />
+
+            </Grid>
+
+            <!-- RESULT -->
+            <TextBlock FontSize="20"
+                       FontWeight="SemiBold"
+                       Text="{x:Bind ViewModel.Result, Mode=OneWay}" />
+
+        </StackPanel>
+
+        <!-- RIGHT SIDE -->
+        <Border Grid.Column="1"
+                Background="#1E1E1E"
+                Padding="10"
+                CornerRadius="10">
+
+            <StackPanel>
+
+                <TextBlock Text="History"
+                           FontSize="18"
+                           FontWeight="Bold"
+                           Foreground="HotPink" />
+
+                <ListView ItemsSource="{x:Bind ViewModel.History, Mode=OneWay}"
+                          Margin="0,10,0,0" />
+
+            </StackPanel>
+
+        </Border>
+
+    </Grid>
+
+</Window>
